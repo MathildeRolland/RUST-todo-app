@@ -16,6 +16,11 @@ fn init_todos() -> Vec<Todo> {
     todos
 }
 
+fn add_todo(todos: &mut Vec<Todo>, input: String) {
+    let new_todo = Todo {id: 4, label: input, completed: false};
+    todos.push(new_todo);
+}
+
 fn view_todos(todos: &[Todo]) {
     let todos_iter = todos.into_iter();
     for todo in todos_iter {
@@ -24,7 +29,7 @@ fn view_todos(todos: &[Todo]) {
 } 
 
 fn main() {
-    let todos = self::init_todos();
+    let mut todos = init_todos();
 
     println!("Que souhaitez-vous faire?");
     println!("1. Voir la liste des todos");
@@ -37,11 +42,17 @@ fn main() {
 
     match user_input_as_number {
         1 => {
-            self::view_todos(&todos);
+            view_todos(todos.as_mut_slice());
             let mut chosen_todo_index = String::new();
             io::stdin().read_line(&mut chosen_todo_index).expect("Failed to read line");
+            let _chosen_todo_index_as_string = chosen_todo_index.trim().parse::<u32>().expect("Invalid input");
         },
-        2 => {},
+        2 => {
+            println!("Veuillez renseigner le titre de votre nouvelle todo:");
+            let mut input = String::new();
+            io::stdin().read_line(&mut input).expect("Failed to read line");
+            add_todo(&mut todos, input);
+        },
         _ => {}
     }
 
