@@ -24,7 +24,7 @@ fn add_todo(todos: &mut Vec<Todo>, input: String) {
 fn view_todos(todos: &[Todo]) {
     let todos_iter = todos.into_iter();
     for todo in todos_iter {
-        println!("{}. {}", todo.id, todo.label);
+        println!("{}. [{}] {}", todo.id, if todo.completed {"x"} else {""}, todo.label);
     }
 } 
 
@@ -35,18 +35,37 @@ fn get_selected_todo(todos: &mut Vec<Todo>, chosen_todo_index: u32) -> Option<&m
     selected_todo
 }
 
+fn ask_user_desired_action() ->u32 {
+    println!("1. Marquer comme Fait/A faire");
+    println!("2. Editer");
+    println!("3. Supprimer");
+
+    let mut user_input = String::new();
+    io::stdin().read_line(&mut user_input).expect("Failed to read line");
+
+    let user_input_as_number = user_input.trim().parse::<u32>().expect("Invalid input");
+    user_input_as_number
+}
+
 fn handle_todo_choice(todos: &mut Vec<Todo>, chosen_todo_index: u32) {
-    match chosen_todo_index {
+    if chosen_todo_index as usize > todos.len() {
+        println!("Cette todo n'existe pas");
+        return;
+    }
+    
+    let selected_action = ask_user_desired_action();
+    match selected_action {
         1 => {
-            let selected_todo = get_selected_todo(todos, chosen_todo_index);
-            if selected_todo.is_some() {
-                todos[chosen_todo_index as usize - 1].completed = true;
+            let selected_todo_option = get_selected_todo(todos, chosen_todo_index);
+            if selected_todo_option.is_some() {
+                let todo = &mut todos[chosen_todo_index as usize - 1];
+                todo.completed = !todo.completed;
                 println!("{:?}", todos);
             }
         },
         2 => {},
         3 => {},
-        _ => println!("Cette todo n'existe pas")
+        _ => println!("Veuillez sélectionner une action valide")
      }
     
 
@@ -68,11 +87,13 @@ fn main() {
     
         match user_input_as_number {
             1 => {
-                view_todos(todos.as_mut_slice());
-                let mut chosen_todo_index = String::new();
-                io::stdin().read_line(&mut chosen_todo_index).expect("Failed to read line");
-                let chosen_todo_index_as_number = chosen_todo_index.trim().parse::<u32>().expect("Invalid input");
-                handle_todo_choice(&mut todos, chosen_todo_index_as_number);
+                loop {
+                    view_todos(todos.as_mut_slice());
+                    let mut chosen_todo_index = String::new();
+                    io::stdin().read_line(&mut chosen_todo_index).expect("Failed to read line");
+                    let chosen_todo_index_as_number = chosen_todo_index.trim().parse::<u32>().expect("Invalid input");
+                    handle_todo_choice(&mut todos, chosen_todo_index_as_number);
+                }
             },
             2 => {
                 println!("Veuillez renseigner le titre de votre nouvelle todo:");
