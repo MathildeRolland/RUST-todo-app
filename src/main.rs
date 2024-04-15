@@ -46,8 +46,7 @@ fn handle_todo_choice(todos: &mut Vec<Todo>, chosen_todo_index: u32) {
 }
 
 fn main() {
-    let todos_controller = TodosController::new();
-    let mut todos = todos_controller.todos ;
+    let mut todos_controller = TodosController::new();
 
     loop {
 
@@ -63,18 +62,18 @@ fn main() {
         match user_input_as_number {
             1 => {
                 loop {
-                    TodosController::view_todos(todos.as_mut_slice());
+                    todos_controller.view_todos();
                     let mut chosen_todo_index = String::new();
                     io::stdin().read_line(&mut chosen_todo_index).expect("Failed to read line");
                     let chosen_todo_index_as_number = chosen_todo_index.trim().parse::<u32>().expect("Invalid input");
-                    handle_todo_choice(&mut todos, chosen_todo_index_as_number);
+                    handle_todo_choice(&mut todos_controller.todos, chosen_todo_index_as_number);
                 }
             },
             2 => {
                 println!("Veuillez renseigner le titre de votre nouvelle todo:");
                 let mut input = String::new();
                 io::stdin().read_line(&mut input).expect("Failed to read line");
-                TodosController::add_todo(&mut todos, input);
+                todos_controller.add_todo(input);
             },
             _ => {}
         }
