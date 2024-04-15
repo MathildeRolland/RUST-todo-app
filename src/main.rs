@@ -1,6 +1,8 @@
 pub mod todos;
-use todos::todos::{Todo, TodosController};
-use std::io;
+pub mod utils;
+
+use todos::{Todo, TodosController};
+use utils::{read_user_input, parse_user_input};
 
 fn get_selected_todo(todos: &mut Vec<Todo>, chosen_todo_index: u32) -> Option<&mut Todo> {
     let selected_todo = todos.into_iter().find(|todo| {
@@ -14,10 +16,7 @@ fn ask_user_desired_action() ->u32 {
     println!("2. Editer");
     println!("3. Supprimer");
 
-    let mut user_input = String::new();
-    io::stdin().read_line(&mut user_input).expect("Failed to read line");
-
-    let user_input_as_number = user_input.trim().parse::<u32>().expect("Invalid input");
+    let user_input_as_number = parse_user_input(read_user_input());
     user_input_as_number
 }
 
@@ -49,30 +48,23 @@ fn main() {
     let mut todos_controller = TodosController::new();
 
     loop {
-
         println!("Que souhaitez-vous faire?");
         println!("1. Voir la liste des todos");
         println!("2. Ajouter un todo");
+
+        let user_input = parse_user_input(read_user_input());
     
-        let mut user_input = String::new();
-        io::stdin().read_line(&mut user_input).expect("Failed to read line");
-    
-        let user_input_as_number = user_input.trim().parse::<u32>().expect("Invalid input");
-    
-        match user_input_as_number {
+        match user_input {
             1 => {
                 loop {
                     todos_controller.view_todos();
-                    let mut chosen_todo_index = String::new();
-                    io::stdin().read_line(&mut chosen_todo_index).expect("Failed to read line");
-                    let chosen_todo_index_as_number = chosen_todo_index.trim().parse::<u32>().expect("Invalid input");
-                    handle_todo_choice(&mut todos_controller.todos, chosen_todo_index_as_number);
+                    let chosen_todo_index = parse_user_input(read_user_input());
+                    handle_todo_choice(&mut todos_controller.todos, chosen_todo_index);
                 }
             },
             2 => {
                 println!("Veuillez renseigner le titre de votre nouvelle todo:");
-                let mut input = String::new();
-                io::stdin().read_line(&mut input).expect("Failed to read line");
+                let input = read_user_input();
                 todos_controller.add_todo(input);
             },
             _ => {}
