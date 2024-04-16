@@ -27,6 +27,14 @@ impl TodosController {
         self.todos.push(new_todo);
     }
 
+    pub fn edit_todo(&mut self, todo_index: u32, new_label: String) {
+        let selected_todo_option = self.get_todo_by_id(todo_index);
+        if selected_todo_option.is_some() {
+            let todo = &mut self.todos[todo_index as usize - 1];
+            todo.label = new_label;
+        }
+    }
+
     pub fn view_todos(&self) {
         for todo in &self.todos {
             println!("{}. [{}] {}", todo.id, if todo.completed {"x"} else {""}, todo.label);
