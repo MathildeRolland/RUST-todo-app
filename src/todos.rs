@@ -32,6 +32,21 @@ impl TodosController {
             println!("{}. [{}] {}", todo.id, if todo.completed {"x"} else {""}, todo.label);
         }
     } 
+
+    pub fn toggle_todo_completion(&mut self, todo_index: u32) {
+        let selected_todo_option = self.get_todo_by_id(todo_index);
+        if selected_todo_option.is_some() {
+            let todo = &mut self.todos[todo_index as usize - 1];
+            todo.completed = !todo.completed;
+        }
+    }
+
+    pub fn get_todo_by_id(&self, todo_index: u32) -> Option<&Todo> {
+        let selected_todo = self.todos.iter().find(|todo| {
+            todo.id == todo_index
+        });
+        selected_todo
+    }
 }
 
 

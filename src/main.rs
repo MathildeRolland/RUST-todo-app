@@ -1,17 +1,11 @@
 pub mod todos;
 pub mod utils;
 
-use todos::{Todo, TodosController};
+use todos::TodosController;
 use utils::{read_user_input, parse_user_input};
 
-fn get_selected_todo(todos: &mut Vec<Todo>, chosen_todo_index: u32) -> Option<&mut Todo> {
-    let selected_todo = todos.into_iter().find(|todo| {
-        todo.id == chosen_todo_index
-    });
-    selected_todo
-}
 
-fn ask_user_desired_action() ->u32 {
+fn ask_user_desired_action_on_todo() ->u32 {
     println!("1. Marquer comme Fait/A faire");
     println!("2. Editer");
     println!("3. Supprimer");
@@ -20,28 +14,19 @@ fn ask_user_desired_action() ->u32 {
     user_input_as_number
 }
 
-fn handle_todo_choice(todos: &mut Vec<Todo>, chosen_todo_index: u32) {
-    if chosen_todo_index as usize > todos.len() {
+fn handle_todo_choice(todos_controller: &mut TodosController, chosen_todo_index: u32) {
+    if chosen_todo_index as usize > todos_controller.todos.len() {
         println!("Cette todo n'existe pas");
         return;
     }
     
-    let selected_action = ask_user_desired_action();
+    let selected_action = ask_user_desired_action_on_todo();
     match selected_action {
-        1 => {
-            let selected_todo_option = get_selected_todo(todos, chosen_todo_index);
-            if selected_todo_option.is_some() {
-                let todo = &mut todos[chosen_todo_index as usize - 1];
-                todo.completed = !todo.completed;
-                println!("{:?}", todos);
-            }
-        },
+        1 => todos_controller.toggle_todo_completion(chosen_todo_index),
         2 => {},
         3 => {},
         _ => println!("Veuillez sélectionner une action valide")
-     }
-    
-
+    }
 }
 
 fn main() {
@@ -59,7 +44,7 @@ fn main() {
                 loop {
                     todos_controller.view_todos();
                     let chosen_todo_index = parse_user_input(read_user_input());
-                    handle_todo_choice(&mut todos_controller.todos, chosen_todo_index);
+                    handle_todo_choice(&mut todos_controller, chosen_todo_index);
                 }
             },
             2 => {
