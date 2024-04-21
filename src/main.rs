@@ -27,7 +27,7 @@ fn handle_todo_choice(todos_controller: &mut TodosController, chosen_todo_index:
             let todo_label_input = read_user_input();
             todos_controller.edit_todo(chosen_todo_index, todo_label_input)
         },
-        3 => {},
+        3 => todos_controller.delete_todo(chosen_todo_index),
         _ => println!("Veuillez sélectionner une action valide")
     }
 }

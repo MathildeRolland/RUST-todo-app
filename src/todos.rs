@@ -35,6 +35,10 @@ impl TodosController {
         }
     }
 
+    pub fn delete_todo(&mut self, todo_index: u32) {
+        self.todos.remove(todo_index as usize - 1);
+    }
+
     pub fn view_todos(&self) {
         for todo in &self.todos {
             println!("{}. [{}] {}", todo.id, if todo.completed {"x"} else {""}, todo.label);
