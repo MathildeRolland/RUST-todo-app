@@ -1,9 +1,8 @@
-pub mod todos;
-pub mod utils;
-
-use todos::TodosController;
+use todos::{todos_controller::TodosController, todos_service::TodosService};
 use utils::{read_user_input, parse_user_input};
 
+pub mod todos;
+pub mod utils;
 
 fn ask_user_desired_action_on_todo() ->u32 {
     println!("1. Marquer comme Fait/A faire");
@@ -15,7 +14,7 @@ fn ask_user_desired_action_on_todo() ->u32 {
 }
 
 fn handle_todo_choice(todos_controller: &mut TodosController, chosen_todo_index: u32) {
-    if chosen_todo_index as usize > todos_controller.todos.len() {
+    if chosen_todo_index as usize > todos_controller.get_todos().len() {
         println!("Cette todo n'existe pas");
         return;
     }
@@ -33,7 +32,7 @@ fn handle_todo_choice(todos_controller: &mut TodosController, chosen_todo_index:
 }
 
 fn main() {
-    let mut todos_controller = TodosController::new();
+    let mut todos_controller = TodosController::new(TodosService::new());
 
     loop {
         println!("Que souhaitez-vous faire?");
